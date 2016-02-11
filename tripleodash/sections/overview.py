@@ -96,7 +96,9 @@ class OverviewWidget(DashboardWidget):
     def deploying(self, stacks):
         stack_info = []
         for stack in stacks:
-            stack_info.append(util.header(stack.stack_name))
+            header = "Stack '{0}' status: {1}".format(
+                stack.stack_name, stack.stack_status)
+            stack_info.append(util.header(header))
             stack_info.extend(self._stack_summary(stack))
             stack_info.append(urwid.Divider())
         return stack_info
