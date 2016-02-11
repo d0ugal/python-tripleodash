@@ -1,6 +1,7 @@
 import collections
 
 from heatclient.common import event_utils
+from ironic_inspector_client.common import http as inspector_http
 import urwid
 
 from tripleodash import clients
@@ -61,7 +62,10 @@ class OverviewWidget(DashboardWidget):
         by_introspection_status = collections.defaultdict(list)
 
         for node in nodes:
-            inspector_status = self.inspector.get_status(node.uuid)
+            try:
+                inspector_status = self.inspector.get_status(node.uuid)
+            except inspector_http.Clienterror:
+                inspector_status = {'finished': "Not started"}
             by_introspection_status[inspector_status['finished']].append(node)
             by_provision_state[node.provision_state].append(node)
 
