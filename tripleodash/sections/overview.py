@@ -76,7 +76,8 @@ class OverviewWidget(DashboardWidget):
 
         for state, nodes in by_provision_state.iteritems():
             lines.append(
-                urwid.Text("{0} nodes {1}".format(len(nodes), state))
+                urwid.Text("{0} nodes with the provisioning state '{1}'"
+                           .format(len(nodes), state))
             )
 
         lines.extend([
