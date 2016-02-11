@@ -64,7 +64,7 @@ class OverviewWidget(DashboardWidget):
         for node in nodes:
             try:
                 inspector_status = self.inspector.get_status(node.uuid)
-            except inspector_http.Clienterror:
+            except inspector_http.ClientError:
                 inspector_status = {'finished': "Not started"}
             by_introspection_status[inspector_status['finished']].append(node)
             by_provision_state[node.provision_state].append(node)
