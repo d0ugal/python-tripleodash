@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 class Anon(object):
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -9,7 +12,8 @@ def heatclient():
 
         def __init__(self):
             stacks = [
-                # Anon(stack_status="CREATE_COMPLETE", stack_name="overcloud"),
+                Anon(stack_status="CREATE_COMPLETE", stack_name="overcloud",
+                     creation_time=datetime.now(), updated_time=None),
                 # Anon(stack_status="CREATE_FAILED", stack_name="overcloud"),
                 # Anon(stack_status="CREATE_IN", stack_name="overcloud"),
             ]
