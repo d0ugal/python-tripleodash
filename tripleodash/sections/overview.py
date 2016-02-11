@@ -80,8 +80,10 @@ class OverviewWidget(DashboardWidget):
             )
 
         lines.extend([
-            urwid.Text("{0} of {1} nodes introspected".format(
-                len(by_introspection_status[True]), len(nodes))),
+            urwid.Text("{0} nodes currently being introspected".format(
+                len(by_introspection_status[False]))),
+            urwid.Text("{0} nodes finished introspection".format(
+                len(by_introspection_status[True]))),
             urwid.Divider(),
         ])
 
