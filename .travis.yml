@@ -21,3 +21,4 @@ deploy:
   on:
     repo: d0ugal/python-tripleodash
     condition: "$TOXENV = py34"
+    tags: true
