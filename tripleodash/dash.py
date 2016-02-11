@@ -1,5 +1,6 @@
 import urwid
 
+import tripleodash
 from tripleodash import palette
 from tripleodash.sections import nodes
 from tripleodash.sections import overview
@@ -87,6 +88,8 @@ class Dashboard(urwid.WidgetWrap):
 
         l = [
             util.main_header("TripleO Dashboard", align="center"),
+            util.subtle("v{0}".format(tripleodash.RELEASE_STRING),
+                        align="center"),
             urwid.Divider(),
             urwid.Divider(),
             util.button("Overview", self.overview_window),
