@@ -1,5 +1,7 @@
 import urwid
 
+from tripleodash import util
+
 
 class DashboardWidget(object):
 
@@ -11,7 +13,7 @@ class DashboardWidget(object):
 
     def widgets(self):
         return [
-            urwid.Text(('header', self.title), 'center'),
+            util.header(self.title, 'center'),
             urwid.Divider(),
             urwid.Divider(),
         ]

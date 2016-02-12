@@ -15,16 +15,16 @@ def exit_button(t):
     return button(t, fn)
 
 
-def main_header(t, **args):
-    return urwid.Text(("main header", "{0} ".format(t)), **args)
+def main_header(t, **kwargs):
+    return urwid.Text(("main header", "{0} ".format(t)), **kwargs)
 
 
-def header(t, **args):
-    return urwid.Text(("header", t), **args)
+def header(t, *args, **kwargs):
+    return urwid.Text(("header", t), *args, **kwargs)
 
 
-def subtle(t, **args):
-    return urwid.Text(("subtle", t), **args)
+def subtle(t, **kwargs):
+    return urwid.Text(("subtle", t), **kwargs)
 
 
 def row_a(t):

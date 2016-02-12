@@ -7,7 +7,10 @@ from tripleodash import util
 
 class NodeRow(urwid.WidgetWrap):
     def __init__(self, uuid, instance_uuid, power_state,
-                 provision_state, maintenance, widget=urwid.Text):
+                 provision_state, maintenance, widget=urwid.Text,
+                 selectable=True):
+
+        self._selectable = selectable
 
         cols = urwid.Columns([
             (40, widget(str(uuid))),
@@ -20,7 +23,7 @@ class NodeRow(urwid.WidgetWrap):
         super(NodeRow, self).__init__(urwid.AttrMap(cols, None, 'reversed'))
 
     def selectable(self):
-        return True
+        return self._selectable
 
     def keypress(self, size, key):
         return key
@@ -35,7 +38,7 @@ class NodesWidget(DashboardWidget):
 
         nodes = [
             NodeRow("UUID", "Instance UUID", "Power State", "Provision State",
-                    "Maintenance", widget=util.header),
+                    "Maintenance", widget=util.header, selectable=False),
             urwid.Divider(),
         ]
 

@@ -78,7 +78,7 @@ def inspectorclient():
     class InspectorClient(object):
 
         def get_status(self, uuid):
-            return {'finished': True}
+            return {'finished': True, 'error': 'ERROR MSG'}
 
     return InspectorClient()
 

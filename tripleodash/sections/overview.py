@@ -81,6 +81,8 @@ class OverviewWidget(DashboardWidget):
             )
 
         lines.extend([
+            urwid.Divider(),
+            util.header("Node Introspection"),
             urwid.Text("{0} nodes currently being introspected".format(
                 len(by_introspection_status[False]))),
             urwid.Text("{0} nodes finished introspection".format(
@@ -116,37 +118,20 @@ class OverviewWidget(DashboardWidget):
         return lines
 
     def undeployed(self):
-
         lines = [
             util.header("Heat Stack"),
             urwid.Text("No stacks deployed.", ),
             urwid.Divider(),
         ]
-
         lines.extend(self._images_summary())
         lines.extend(self._ironic_summary())
-
-        lines.extend([
-            util.header("Nova Flavors"),
-            urwid.Text("Flavors: X, Y, Z"),
-            urwid.Divider(),
-        ])
-
         return lines
 
     def deployed(self, stacks):
         lines = []
-
         lines.extend(self._stacks_summary(stacks))
         lines.extend(self._images_summary())
         lines.extend(self._ironic_summary())
-
-        lines.extend([
-            util.header("Nova Flavors"),
-            urwid.Text("Flavors: X, Y, Z"),
-            urwid.Divider(),
-        ])
-
         return lines
 
     def deploying(self, stacks):
