@@ -74,6 +74,8 @@ class OverviewWidget(DashboardWidget):
                            .format(len(nodes), state))
             )
 
+        return lines
+
     def _inspector_summary(self):
 
         nodes = list(self.ironic.node.list())
