@@ -105,7 +105,7 @@ class OverviewWidget(DashboardWidget):
 
         events = event_utils.get_events(self.heat,
                                         stack_id=stack.stack_name,
-                                        nested_depth=5,
+                                        nested_depth=2,
                                         event_args={'sort_dir': 'asc'})
 
         return util.heat_event_log_formatter(events[-25:])
