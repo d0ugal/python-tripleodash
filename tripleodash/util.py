@@ -50,4 +50,6 @@ def heat_event_log_formatter(events):
         }
         event_log.append(log)
 
-    return urwid.Text('\n'.join(event_log), wrap='clip')
+    body = [urwid.Text(line) for line in event_log]
+
+    return urwid.ListBox(urwid.SimpleListWalker(body))
