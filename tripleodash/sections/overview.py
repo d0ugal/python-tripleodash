@@ -98,11 +98,8 @@ class OverviewWidget(DashboardWidget):
                                         stack_id=stack.stack_name,
                                         nested_depth=1,
                                         event_args={'sort_dir': 'asc'})
-        lines = []
 
-        lines.extend(self._ironic_summary())
-        lines.extend(util.heat_event_log_formatter(events[-50:]))
-        return lines
+        return util.heat_event_log_formatter(events[-50:])
 
     def _stacks_summary(self, stacks):
 
@@ -139,14 +136,17 @@ class OverviewWidget(DashboardWidget):
         return lines
 
     def deploying(self, stacks):
-        stack_info = []
+        lines = []
+
+        lines.extend(self._ironic_summary())
+
         for stack in stacks:
             header = "Stack '{0}' status: {1}".format(
                 stack.stack_name, stack.stack_status)
-            stack_info.append(util.header(header))
-            stack_info.extend(self._stack_event_summary(stack))
-            stack_info.append(urwid.Divider())
-        return stack_info
+            lines.append(util.header(header))
+            lines.extend(self._stack_event_summary(stack))
+            lines.append(urwid.Divider())
+        return lines
 
     def widgets(self):
 
