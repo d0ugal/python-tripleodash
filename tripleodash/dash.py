@@ -78,9 +78,9 @@ class Dashboard(urwid.WidgetWrap):
             self._widgets['nodes'] = nodes.NodesWidget()
         self._active_widget = self._widgets['nodes']
 
-    def stack_window(self, loop=None, user_data=None):
+    def stacks_window(self, loop=None, user_data=None):
         if 'stack' not in self._widgets:
-            self._widgets['stack'] = stacks.StackWidget()
+            self._widgets['stack'] = stacks.StacksWidget()
         self._active_widget = self._widgets['stack']
 
     def overview_window(self, loop=None, user_data=None):
@@ -106,7 +106,7 @@ class Dashboard(urwid.WidgetWrap):
             urwid.Divider(),
             util.button("Overview", self.overview_window),
             util.button("Nodes", self.nodes_window),
-            util.button("Stack", self.stack_window),
+            util.button("Stacks", self.stacks_window),
             urwid.Divider(),
             urwid.Divider(),
             util.exit_button("Quit")

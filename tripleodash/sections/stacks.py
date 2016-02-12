@@ -1,17 +1,14 @@
-import urwid
-
 from tripleodash.sections.base import DashboardWidget
 
 
-class StackWidget(DashboardWidget):
+class StacksWidget(DashboardWidget):
 
     def __init__(self):
-        self.title = "Stack"
+        self.title = "Stacks"
 
     def update(self):
         pass
 
     def widgets(self):
-        return super(StackWidget, self).widgets() + [
-            urwid.Text("Heat Stack: %s" % "CREATE_COMPLETE"),
+        return super(StacksWidget, self).widgets() + [
         ]
