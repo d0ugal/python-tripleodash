@@ -59,14 +59,8 @@ class OverviewWidget(DashboardWidget):
 
         nodes = list(self.ironic.node.list())
         by_provision_state = collections.defaultdict(list)
-        by_introspection_status = collections.defaultdict(list)
 
         for node in nodes:
-            try:
-                inspector_status = self.inspector.get_status(node.uuid)
-            except inspector_http.ClientError:
-                inspector_status = {'finished': "Not started"}
-            by_introspection_status[inspector_status['finished']].append(node)
             by_provision_state[node.provision_state].append(node)
 
         lines = [
@@ -80,7 +74,19 @@ class OverviewWidget(DashboardWidget):
                            .format(len(nodes), state))
             )
 
-        lines.extend([
+    def _inspector_summary(self):
+
+        nodes = list(self.ironic.node.list())
+        by_introspection_status = collections.defaultdict(list)
+
+        for node in nodes:
+            try:
+                inspector_status = self.inspector.get_status(node.uuid)
+            except inspector_http.ClientError:
+                inspector_status = {'finished': "Not started"}
+            by_introspection_status[inspector_status['finished']].append(node)
+
+        return [
             urwid.Divider(),
             util.header("Node Introspection"),
             urwid.Text("{0} nodes currently being introspected".format(
@@ -88,9 +94,7 @@ class OverviewWidget(DashboardWidget):
             urwid.Text("{0} nodes finished introspection".format(
                 len(by_introspection_status[True]))),
             urwid.Divider(),
-        ])
-
-        return lines
+        ]
 
     def _stack_event_summary(self, stack):
 
@@ -126,6 +130,7 @@ class OverviewWidget(DashboardWidget):
         ]
         lines.extend(self._images_summary())
         lines.extend(self._ironic_summary())
+        lines.extend(self._inspector_summary())
         return lines
 
     def deployed(self, stacks):
@@ -133,6 +138,7 @@ class OverviewWidget(DashboardWidget):
         lines.extend(self._stacks_summary(stacks))
         lines.extend(self._images_summary())
         lines.extend(self._ironic_summary())
+        lines.extend(self._inspector_summary())
         return lines
 
     def deploying(self, stacks):
