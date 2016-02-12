@@ -98,7 +98,7 @@ class OverviewWidget(DashboardWidget):
                                         stack_id=stack.stack_name,
                                         nested_depth=1,
                                         event_args={'sort_dir': 'asc'})
-        return util.heat_event_log_formatter(events[-100:])
+        return util.heat_event_log_formatter(events[-20:])
 
     def _stacks_summary(self, stacks):
 
