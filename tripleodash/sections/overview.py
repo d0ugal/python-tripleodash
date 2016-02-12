@@ -178,7 +178,7 @@ class OverviewWidget(DashboardWidget):
             lines.append(util.header(header))
             lines.append(urwid.Text(stack.stack_status_reason))
 
-            lines.extend(self._stack_error(stack))
+            lines.extend(self._resource_error(stack))
             lines.append(urwid.Divider())
 
         return lines
