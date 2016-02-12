@@ -3,7 +3,7 @@ from tripleodash import dash
 
 def main():
 
-    UPDATE_INTERVAL = .5
+    UPDATE_INTERVAL = 2
 
     try:
         dash.Dashboard(UPDATE_INTERVAL).run()

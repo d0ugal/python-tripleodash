@@ -1,3 +1,5 @@
+import datetime
+
 import urwid
 
 import tripleodash
@@ -16,8 +18,10 @@ class Dashboard(urwid.WidgetWrap):
         self._content_walker = None
         self._interval = update_interval
         self._widgets = {}
+        self._time = None
 
         self.overview_window()
+        self.update_time()
 
         super(Dashboard, self).__init__(self.main_window())
 
@@ -84,12 +88,20 @@ class Dashboard(urwid.WidgetWrap):
             self._widgets['overview'] = overview.OverviewWidget()
         self._active_widget = self._widgets['overview']
 
+    def update_time(self):
+        time_string = datetime.datetime.now().strftime("%H:%M:%S %Z")
+        if self._time is None:
+            self._time = util.subtle(time_string, align="center")
+        else:
+            self._time.set_text(("subtle", time_string))
+
     def menu(self):
 
         l = [
             util.main_header("TripleO Dashboard", align="center"),
             util.subtle("v{0}".format(tripleodash.RELEASE_STRING),
                         align="center"),
+            self._time,
             urwid.Divider(),
             urwid.Divider(),
             util.button("Overview", self.overview_window),
@@ -105,6 +117,7 @@ class Dashboard(urwid.WidgetWrap):
 
     def tick(self, loop=None, user_data=None):
 
+        self.update_time()
         self.update_content()
 
         self.animate_alarm = self._loop.set_alarm_in(self._interval, self.tick)
