@@ -176,7 +176,7 @@ class OverviewWidget(DashboardWidget):
             header = "Stack '{0}' status: {1}".format(
                 stack.stack_name, stack.stack_status)
             lines.append(util.header(header))
-            lines.append(urwid.Text(stack.status_reason))
+            lines.append(urwid.Text(stack.stack_status_reason))
 
             lines.extend(self._stack_error(stack))
             lines.append(urwid.Divider())
