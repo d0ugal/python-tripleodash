@@ -52,4 +52,4 @@ def heat_event_log_formatter(events):
 
     body = [urwid.Text(line) for line in event_log]
 
-    return urwid.ListBox(urwid.SimpleListWalker(body))
+    return urwid.SimpleListWalker(body)
