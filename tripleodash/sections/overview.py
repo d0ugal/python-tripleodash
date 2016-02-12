@@ -130,7 +130,7 @@ class OverviewWidget(DashboardWidget):
 
     def _resource_error(self, stack):
 
-        for resource in self.heat.resources.list():
+        for resource in self.heat.resources.list(stack.stack_name):
             if resource.resource_status in FAILED_STATUSES:
                 yield util.header(resource.resource_name)
                 yield urwid.Text(resource.resource_status_reason)
