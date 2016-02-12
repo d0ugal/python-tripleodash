@@ -37,7 +37,6 @@ class StackRow(urwid.WidgetWrap):
 class OverviewWidget(DashboardWidget):
 
     def __init__(self):
-        self.title = "Overview"
         self.heat = clients.heatclient()
         self.ironic = clients.ironicclient()
         self.inspector = clients.inspectorclient()
@@ -130,12 +129,22 @@ class OverviewWidget(DashboardWidget):
 
     def _resource_error(self, stack):
 
-        for resource in self.heat.resources.list(stack.stack_name):
-            if resource.resource_status in FAILED_STATUSES:
-                yield util.header(resource.resource_name)
-                yield urwid.Text(resource.resource_status_reason)
+        resources = self.heat.resources.list(stack.stack_name, nested_depth=5)
+
+        failed = (resource for resource in resources
+                  if resource.resource_status in FAILED_STATUSES)
+
+        for resource in failed:
+            yield util.header("Failed resource: {0}"
+                              .format(resource.resource_name))
+            yield urwid.Text("Status reason: {0}"
+                             .format(resource.resource_status_reason))
+            yield urwid.Divider()
 
     def undeployed(self):
+
+        self.title += "- Not Yet Deployed"
+
         lines = [
             util.header("Heat Stack"),
             urwid.Text("No stacks deployed.", ),
@@ -147,6 +156,9 @@ class OverviewWidget(DashboardWidget):
         return lines
 
     def deployed(self, stacks):
+
+        self.title += "- Deploy Complete"
+
         lines = []
         lines.extend(self._stacks_summary(stacks))
         lines.extend(self._images_summary())
@@ -155,6 +167,9 @@ class OverviewWidget(DashboardWidget):
         return lines
 
     def deploying(self, stacks):
+
+        self.title += "- Deploy In Progress"
+
         lines = []
 
         lines.extend(self._ironic_summary())
@@ -168,6 +183,9 @@ class OverviewWidget(DashboardWidget):
         return lines
 
     def failed(self, stacks):
+
+        self.title += "- Deploy Failed"
+
         lines = []
 
         lines.extend(self._ironic_summary())
@@ -176,7 +194,6 @@ class OverviewWidget(DashboardWidget):
             header = "Stack '{0}' status: {1}".format(
                 stack.stack_name, stack.stack_status)
             lines.append(util.header(header))
-            lines.append(urwid.Text(stack.stack_status_reason))
 
             lines.extend(self._resource_error(stack))
             lines.append(urwid.Divider())
@@ -184,6 +201,8 @@ class OverviewWidget(DashboardWidget):
         return lines
 
     def widgets(self):
+
+        self.title = "Overview"
 
         stacks = list(self.heat.stacks.list())
 
