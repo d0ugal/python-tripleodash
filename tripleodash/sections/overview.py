@@ -8,6 +8,9 @@ from tripleodash import clients
 from tripleodash.sections.base import DashboardWidget
 from tripleodash import util
 
+DEPLOYED_STATUSES = set(['CREATE_COMPLETE', 'UPDATE_COMPLETE'])
+FAILED_STATUSES = set(['CREATE_COMPLETE', 'UPDATE_COMPLETE'])
+
 
 class StackRow(urwid.WidgetWrap):
     def __init__(self, stack_name, stack_status, creation_time, updated_time,
@@ -125,6 +128,13 @@ class OverviewWidget(DashboardWidget):
 
         return lines
 
+    def _resource_error(self, stack):
+
+        for resource in self.heat.resources.list():
+            if resource.resource_status in FAILED_STATUSES:
+                yield util.header(resource.resource_name)
+                yield urwid.Text(resource.resource_status_reason)
+
     def undeployed(self):
         lines = [
             util.header("Heat Stack"),
@@ -157,18 +167,35 @@ class OverviewWidget(DashboardWidget):
             lines.append(urwid.Divider())
         return lines
 
+    def failed(self, stacks):
+        lines = []
+
+        lines.extend(self._ironic_summary())
+
+        for stack in stacks:
+            header = "Stack '{0}' status: {1}".format(
+                stack.stack_name, stack.stack_status)
+            lines.append(util.header(header))
+            lines.append(urwid.Text(stack.status_reason))
+
+            lines.extend(self._stack_error(stack))
+            lines.append(urwid.Divider())
+
+        return lines
+
     def widgets(self):
 
         stacks = list(self.heat.stacks.list())
 
         deployment_exists = len(stacks) > 0
         stack_statuses = set(stack.stack_status for stack in stacks)
-        deployed_statuses = set(['CREATE_COMPLETE', 'UPDATE_COMPLETE'])
 
         if not deployment_exists:
             widgets = self.undeployed()
-        elif stack_statuses.issubset(deployed_statuses):
+        elif stack_statuses.issubset(DEPLOYED_STATUSES):
             widgets = self.deployed(stacks)
+        elif stack_statuses.issubset(FAILED_STATUSES):
+            widgets = self.failed(stacks)
         else:
             widgets = self.deploying(stacks)
 
