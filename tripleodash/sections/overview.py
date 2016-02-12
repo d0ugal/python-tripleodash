@@ -9,7 +9,7 @@ from tripleodash.sections.base import DashboardWidget
 from tripleodash import util
 
 DEPLOYED_STATUSES = set(['CREATE_COMPLETE', 'UPDATE_COMPLETE'])
-FAILED_STATUSES = set(['CREATE_COMPLETE', 'UPDATE_COMPLETE'])
+FAILED_STATUSES = set(['CREATE_FAILED', 'UPDATE_FAILED'])
 
 
 class StackRow(urwid.WidgetWrap):
