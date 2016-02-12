@@ -50,6 +50,7 @@ def heat_event_log_formatter(events):
         }
         event_log.append(log)
 
-    body = [urwid.Text(line) for line in event_log]
-
-    return urwid.BoxAdapter(urwid.ListBox(urwid.SimpleListWalker(body)), 10)
+    lines = [urwid.Text(line, wrap="clip") for line in event_log]
+    box = urwid.ListBox(urwid.SimpleListWalker(lines))
+    box.set_focus_valign('bottom')
+    return urwid.BoxAdapter(box, 20)
