@@ -202,7 +202,7 @@ class OverviewWidget(DashboardWidget):
 
     def widgets(self):
 
-        self.title = "Overview"
+        self.title = "Overview "
 
         stacks = list(self.heat.stacks.list())
 

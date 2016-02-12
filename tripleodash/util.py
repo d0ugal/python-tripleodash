@@ -50,4 +50,4 @@ def heat_event_log_formatter(events):
         }
         event_log.append(log)
 
-    return [urwid.Text(line) for line in event_log]
+    return urwid.Text(', '.join(event_log))
