@@ -74,6 +74,8 @@ class OverviewWidget(DashboardWidget):
                            .format(len(nodes), state))
             )
 
+        lines.append(urwid.Divider())
+
         return lines
 
     def _inspector_summary(self):
@@ -89,7 +91,6 @@ class OverviewWidget(DashboardWidget):
             by_introspection_status[inspector_status['finished']].append(node)
 
         return [
-            urwid.Divider(),
             util.header("Node Introspection"),
             urwid.Text("{0} nodes currently being introspected".format(
                 len(by_introspection_status[False]))),
