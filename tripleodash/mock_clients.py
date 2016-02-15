@@ -20,8 +20,8 @@ def heatclient():
             ]
             self.stacks = Anon(list=lambda: stacks)
 
-            self.events = Anon(list=lambda **args: [])
-            self.resources = Anon(list=lambda **args: [])
+            self.events = Anon(list=lambda **kwargs: [])
+            self.resources = Anon(list=lambda *args, **kwargs: [])
 
     return HeatClient()
 
