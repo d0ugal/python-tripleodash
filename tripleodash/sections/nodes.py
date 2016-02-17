@@ -52,7 +52,7 @@ class NodesWidget(DashboardWidget):
 
             widget = util.row_a if i % 2 else util.row_b
 
-            introspect_status = clients.inspectorclient.get_status(node.uuid)
+            introspect_status = clients.inspectorclient().get_status(node.uuid)
             introspect_status = introspect_status['finished']
 
             node_table.append(NodeRow(
