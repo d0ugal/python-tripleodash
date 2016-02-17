@@ -28,5 +28,5 @@ Usage
 Screenshot
 ----------
 
-.. image:: doc/source/images/screenshots/screenshot-05-introspection.png
+.. image:: doc/source/images/screenshots/screenshot-10-stack-create-complete.png
     :width: 100%
