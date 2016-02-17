@@ -15,9 +15,9 @@ class NodeRow(urwid.WidgetWrap):
         cols = urwid.Columns([
             (40, widget(str(uuid))),
             (40 if not squash_instance else 10, widget(str(instance_uuid))),
-            (20, widget(str(power_state))),
-            (20, widget(str(provision_state))),
-            (20, widget(str(maintenance))),
+            (15, widget(str(power_state))),
+            (15, widget(str(provision_state))),
+            (15, widget(str(maintenance))),
         ])
 
         super(NodeRow, self).__init__(urwid.AttrMap(cols, None, 'reversed'))
