@@ -50,8 +50,9 @@ class OverviewWidget(DashboardWidget):
             urwid.Text("{0} images found.".format(len(images))),
         ]
 
-        for image in images:
-            widgets.append(urwid.Text("- {0}".format(image.name)))
+        if len(images):
+            for image in images:
+                widgets.append(urwid.Text("- {0}".format(image.name)))
         else:
             widgets.extend([
                 urwid.Text("Use these commands to build and upload images:"),
@@ -76,11 +77,12 @@ class OverviewWidget(DashboardWidget):
             urwid.Text("{0} nodes registered".format(len(nodes))),
         ]
 
-        for state, nodes in by_provision_state.iteritems():
-            lines.append(
-                urwid.Text("{0} nodes with the provisioning state '{1}'"
-                           .format(len(nodes), state))
-            )
+        if len(by_provision_state):
+            for state, nodes in by_provision_state.iteritems():
+                lines.append(
+                    urwid.Text("{0} nodes with the provisioning state '{1}'"
+                               .format(len(nodes), state))
+                )
         else:
             lines.extend([
                 urwid.Text("Use these commands to build and upload images:"),
