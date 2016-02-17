@@ -15,6 +15,10 @@ troubleshooting.
 .. image:: https://travis-ci.org/d0ugal/python-tripleodash.png?branch=master
         :target: https://travis-ci.org/d0ugal/python-tripleodash
 
+.. image:: https://readthedocs.org/projects/python-tripleodash/badge/?version=latest
+        :target: https://readthedocs.org/projects/python-tripleodash/?badge=latest
+        :alt: Documentation Status
+
 Usage
 -----
 
