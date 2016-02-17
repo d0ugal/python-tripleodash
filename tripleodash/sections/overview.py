@@ -52,6 +52,12 @@ class OverviewWidget(DashboardWidget):
 
         for image in images:
             widgets.append(urwid.Text("- {0}".format(image.name)))
+        else:
+            widgets.extend([
+                urwid.Text("Use these commands to build and upload images:"),
+                urwid.Text("    openstack overcloud image build --all"),
+                urwid.Text("    openstack overcloud image upload"),
+            ])
 
         widgets.append(urwid.Divider())
 
@@ -75,6 +81,13 @@ class OverviewWidget(DashboardWidget):
                 urwid.Text("{0} nodes with the provisioning state '{1}'"
                            .format(len(nodes), state))
             )
+        else:
+            lines.extend([
+                urwid.Text("Use these commands to build and upload images:"),
+                urwid.Text("    openstack baremetal import --json "
+                           "instackenv.json"),
+                urwid.Text("    openstack baremetal configure boot"),
+            ])
 
         lines.append(urwid.Divider())
 
@@ -145,14 +158,15 @@ class OverviewWidget(DashboardWidget):
 
         self.title += "- Not Yet Deployed"
 
-        lines = [
-            util.header("Heat Stack"),
-            urwid.Text("No stacks deployed.", ),
-            urwid.Divider(),
-        ]
+        lines = []
         lines.extend(self._images_summary())
         lines.extend(self._ironic_summary())
         lines.extend(self._inspector_summary())
+        lines.extend([
+            util.header("Heat Stack"),
+            urwid.Text("No stacks deployed.", ),
+            urwid.Divider(),
+        ])
         return lines
 
     def deployed(self, stacks):
@@ -160,10 +174,10 @@ class OverviewWidget(DashboardWidget):
         self.title += "- Deploy Complete"
 
         lines = []
-        lines.extend(self._stacks_summary(stacks))
         lines.extend(self._images_summary())
         lines.extend(self._ironic_summary())
         lines.extend(self._inspector_summary())
+        lines.extend(self._stacks_summary(stacks))
         return lines
 
     def deploying(self, stacks):
