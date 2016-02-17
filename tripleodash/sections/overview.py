@@ -120,7 +120,7 @@ class OverviewWidget(DashboardWidget):
 
         events = event_utils.get_events(self.heat,
                                         stack_id=stack.stack_name,
-                                        nested_depth=2,
+                                        nested_depth=1,
                                         event_args={'sort_dir': 'asc'})
 
         return util.heat_event_log_formatter(events[-25:])
@@ -144,7 +144,7 @@ class OverviewWidget(DashboardWidget):
 
     def _resource_error(self, stack):
 
-        resources = self.heat.resources.list(stack.stack_name, nested_depth=5)
+        resources = self.heat.resources.list(stack.stack_name, nested_depth=2)
 
         failed = (resource for resource in resources
                   if resource.resource_status in FAILED_STATUSES)
