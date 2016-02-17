@@ -7,8 +7,8 @@ from tripleodash import util
 
 class NodeRow(urwid.WidgetWrap):
     def __init__(self, uuid, instance_uuid, power_state,
-                 provision_state, maintenance, widget=urwid.Text,
-                 selectable=True, squash_instance=False):
+                 provision_state, maintenance, introspection_status,
+                 widget=urwid.Text, selectable=True, squash_instance=False):
 
         self._selectable = selectable
 
@@ -18,6 +18,7 @@ class NodeRow(urwid.WidgetWrap):
             (10, widget(str(power_state))),
             (14, widget(str(provision_state))),
             (12, widget(str(maintenance))),
+            (13, widget(str(introspection_status))),
         ])
 
         super(NodeRow, self).__init__(urwid.AttrMap(cols, None, 'reversed'))
@@ -41,7 +42,8 @@ class NodesWidget(DashboardWidget):
 
         node_table = [
             NodeRow("UUID", "Instance UUID", "Power State", "Provision State",
-                    "Maintenance", widget=util.header, selectable=False,
+                    "Maintenance", "Introspection Finished",
+                    widget=util.header, selectable=False,
                     squash_instance=not assigned),
             urwid.Divider(),
         ]
@@ -50,9 +52,12 @@ class NodesWidget(DashboardWidget):
 
             widget = util.row_a if i % 2 else util.row_b
 
+            introspect_status = clients.inspectorclient.get_status(node.uuid)
+            introspect_status = introspect_status['finished']
+
             node_table.append(NodeRow(
                 node.uuid, node.instance_uuid, node.power_state,
-                node.provision_state, node.maintenance, widget=widget,
-                squash_instance=not assigned))
+                node.provision_state, node.maintenance, introspect_status,
+                widget=widget, squash_instance=not assigned))
 
         return super(NodesWidget, self).widgets() + node_table
