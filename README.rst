@@ -23,3 +23,10 @@ Usage
     $ pip install python-tripleodash
     $ source stackrc
     $ tripleodash
+
+
+Screenshot
+----------
+
+.. image:: doc/source/images/screenshots/screenshot-05-introspection.png
+    :width: 100%
