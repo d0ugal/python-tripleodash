@@ -4,8 +4,7 @@ from heatclient.common import event_utils
 from ironic_inspector_client.common import http as inspector_http
 import urwid
 
-from tripleodash import clients
-from tripleodash.sections.base import DashboardWidget
+from tripleodash.sections.base import DashboardSection
 from tripleodash import util
 
 DEPLOYED_STATUSES = set(['CREATE_COMPLETE', 'UPDATE_COMPLETE'])
@@ -18,14 +17,16 @@ class StackRow(urwid.WidgetWrap):
 
         self._selectable = selectable
 
-        cols = urwid.Columns([
+        self.cols = [
             (20, widget(str(stack_name))),
             (20, widget(str(stack_status))),
             (20, widget(str(creation_time))),
             (20, widget(str(updated_time))),
-        ])
+        ]
 
-        super(StackRow, self).__init__(urwid.AttrMap(cols, None, 'reversed'))
+        wrapped_cols = urwid.AttrMap(urwid.Columns(self.cols), None,
+                                     'reversed')
+        super(StackRow, self).__init__(wrapped_cols)
 
     def selectable(self):
         return self._selectable
@@ -34,20 +35,17 @@ class StackRow(urwid.WidgetWrap):
         return key
 
 
-class OverviewWidget(DashboardWidget):
+class OverviewWidget(DashboardSection):
 
-    def __init__(self):
-        self.heat = clients.heatclient()
-        self.ironic = clients.ironicclient()
-        self.inspector = clients.inspectorclient()
-        self.glance = clients.glanceclient()
+    def __init__(self, clients):
+        super(OverviewWidget, self).__init__(clients, "Overview")
 
     def _images_summary(self):
-        images = list(self.glance.images.list())
+        images = list(self.clients.glance.images.list())
 
         widgets = [
             util.header("Glance Images"),
-            urwid.Text("{0} images found.".format(len(images))),
+            urwid.Text("{0} images uploaded.".format(len(images))),
         ]
 
         if len(images):
@@ -66,7 +64,7 @@ class OverviewWidget(DashboardWidget):
 
     def _ironic_summary(self):
 
-        nodes = list(self.ironic.node.list())
+        nodes = list(self.clients.ironic.node.list())
         by_provision_state = collections.defaultdict(list)
 
         for node in nodes:
@@ -74,11 +72,11 @@ class OverviewWidget(DashboardWidget):
 
         lines = [
             util.header("Ironic Nodes"),
-            urwid.Text("{0} nodes registered".format(len(nodes))),
+            urwid.Text("{0} nodes registered.".format(len(nodes))),
         ]
 
         if len(by_provision_state):
-            for state, nodes in by_provision_state.iteritems():
+            for state, nodes in by_provision_state.items():
                 lines.append(
                     urwid.Text("{0} nodes with the provisioning state '{1}'"
                                .format(len(nodes), state))
@@ -97,12 +95,12 @@ class OverviewWidget(DashboardWidget):
 
     def _inspector_summary(self):
 
-        nodes = list(self.ironic.node.list())
+        nodes = list(self.clients.ironic.node.list())
         by_introspection_status = collections.defaultdict(list)
 
         for node in nodes:
             try:
-                inspector_status = self.inspector.get_status(node.uuid)
+                inspector_status = self.clients.inspector.get_status(node.uuid)
             except inspector_http.ClientError:
                 inspector_status = {'finished': "Not started"}
             by_introspection_status[inspector_status['finished']].append(node)
@@ -118,7 +116,7 @@ class OverviewWidget(DashboardWidget):
 
     def _stack_event_summary(self, stack):
 
-        events = event_utils.get_events(self.heat,
+        events = event_utils.get_events(self.clients.heat,
                                         stack_id=stack.stack_name,
                                         nested_depth=1,
                                         event_args={'sort_dir': 'asc'})
@@ -144,7 +142,8 @@ class OverviewWidget(DashboardWidget):
 
     def _resource_error(self, stack):
 
-        resources = self.heat.resources.list(stack.stack_name, nested_depth=2)
+        resources = self.clients.heat.resources.list(stack.stack_name,
+                                                     nested_depth=2)
 
         failed = (resource for resource in resources
                   if resource.resource_status in FAILED_STATUSES)
@@ -220,7 +219,7 @@ class OverviewWidget(DashboardWidget):
 
         self.title = "Overview "
 
-        stacks = list(self.heat.stacks.list())
+        stacks = list(self.clients.heat.stacks.list())
 
         deployment_exists = len(stacks) > 0
         stack_statuses = set(stack.stack_status for stack in stacks)

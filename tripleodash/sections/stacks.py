@@ -1,14 +1,13 @@
-from tripleodash.sections.base import DashboardWidget
+from tripleodash.sections.base import DashboardSection
 
 
-class StacksWidget(DashboardWidget):
+class StacksWidget(DashboardSection):
 
-    def __init__(self):
-        self.title = "Stacks"
+    def __init__(self, clients):
+        super(StacksWidget, self).__init__(clients, "Stacks")
 
     def update(self):
         pass
 
     def widgets(self):
-        return super(StacksWidget, self).widgets() + [
-        ]
+        return super(StacksWidget, self).widgets() + []

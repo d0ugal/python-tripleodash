@@ -3,9 +3,10 @@ import urwid
 from tripleodash import util
 
 
-class DashboardWidget(object):
+class DashboardSection(object):
 
-    def __init__(self, title):
+    def __init__(self, clients, title):
+        self.clients = clients
         self.title = title
 
     def update(self):

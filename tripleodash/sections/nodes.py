@@ -1,7 +1,6 @@
 import urwid
 
-from tripleodash import clients
-from tripleodash.sections.base import DashboardWidget
+from tripleodash.sections.base import DashboardSection
 from tripleodash import util
 
 
@@ -12,16 +11,18 @@ class NodeRow(urwid.WidgetWrap):
 
         self._selectable = selectable
 
-        cols = urwid.Columns([
+        self.cols = [
             (40, widget(str(uuid))),
             (40 if not squash_instance else 10, widget(str(instance_uuid))),
             (10, widget(str(power_state))),
             (14, widget(str(provision_state))),
             (12, widget(str(maintenance))),
             (13, widget(str(introspection_status))),
-        ])
+        ]
 
-        super(NodeRow, self).__init__(urwid.AttrMap(cols, None, 'reversed'))
+        wrapped_cols = urwid.AttrMap(urwid.Columns(self.cols), None,
+                                     'reversed')
+        super(NodeRow, self).__init__(wrapped_cols)
 
     def selectable(self):
         return self._selectable
@@ -30,14 +31,14 @@ class NodeRow(urwid.WidgetWrap):
         return key
 
 
-class NodesWidget(DashboardWidget):
+class NodesWidget(DashboardSection):
 
-    def __init__(self):
-        self.title = "Nodes"
+    def __init__(self, clients):
+        super(NodesWidget, self).__init__(clients, "Nodes")
 
     def widgets(self):
 
-        nodes = list(clients.ironicclient().node.list())
+        nodes = list(self.clients.ironic.node.list())
         assigned = False in [node.instance_uuid is None for node in nodes]
 
         node_table = [
@@ -52,7 +53,7 @@ class NodesWidget(DashboardWidget):
 
             widget = util.row_a if i % 2 else util.row_b
 
-            introspect_status = clients.inspectorclient().get_status(node.uuid)
+            introspect_status = self.clients.inspector.get_status(node.uuid)
             introspect_status = introspect_status['finished']
 
             node_table.append(NodeRow(

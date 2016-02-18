@@ -3,93 +3,116 @@ from __future__ import print_function
 import logging
 import os
 
-from glanceclient.v2.client import Client as glance_client
-from heatclient.v1.client import Client as heat_client
+import cachetools
+from glanceclient.v2.client import Client as GlanceClient
+from heatclient.v1.client import Client as HeatClient
 import ironic_inspector_client
-from ironicclient.v1.client import Client as ironic_client
+from ironicclient.v1.client import Client as IronicClient
 from keystoneclient.v2_0 import client as ksclient
 from swiftclient import client as swift_client
 
 LOG = logging.getLogger(__name__)
 
 
-def keystoneclient():
-    return ksclient.Client(
-        username=os.environ.get('OS_USERNAME'),
-        tenant_name=os.environ.get('OS_TENANT_NAME'),
-        password=os.environ.get('OS_PASSWORD'),
-        auth_url=os.environ.get('OS_AUTH_URL'),
-        auth_version=2,
-        insecure=True
-    )
+class ClientManager(object):
 
+    def __init__(self):
+        self._cache = cachetools.TTLCache(100, ttl=60*60)
 
-def glanceclient():
-    try:
-        keystone = keystoneclient()
+    @property
+    def keystone(self):
+
+        if 'keystone' in self._cache:
+            return self._cache['keystone']
+
+        self._cache['keystone'] = ksclient.Client(
+            username=os.environ.get('OS_USERNAME'),
+            tenant_name=os.environ.get('OS_TENANT_NAME'),
+            password=os.environ.get('OS_PASSWORD'),
+            auth_url=os.environ.get('OS_AUTH_URL'),
+            auth_version=2,
+            insecure=True
+        )
+        return self._cache['keystone']
+
+    @property
+    def glance(self):
+
+        if 'glance' in self._cache:
+            return self._cache['glance']
+
+        keystone = self.keystone
         endpoint = keystone.service_catalog.url_for(
             service_type='image',
             endpoint_type='publicURL'
         )
-        return glance_client(
+        self._cache['glance'] = GlanceClient(
             endpoint=endpoint,
             token=keystone.auth_token)
-    except Exception:
-        LOG.exception("An error occurred initializing the Heat client")
-        raise
 
+        return self._cache['glance']
 
-def heatclient():
-    try:
-        keystone = keystoneclient()
+    @property
+    def heat(self):
+
+        if 'heat' in self._cache:
+            return self._cache['heat']
+
+        keystone = self.keystone
         endpoint = keystone.service_catalog.url_for(
             service_type='orchestration',
             endpoint_type='publicURL'
         )
-        return heat_client(
+        self._cache['heat'] = HeatClient(
             endpoint=endpoint,
             token=keystone.auth_token,
             username=os.environ.get('OS_USERNAME'),
             password=os.environ.get('OS_PASSWORD'))
-    except Exception:
-        LOG.exception("An error occurred initializing the Heat client")
-        raise
 
+        return self._cache['heat']
 
-def ironicclient():
-    try:
-        keystone = keystoneclient()
+    @property
+    def ironic(self):
+
+        if 'ironic' in self._cache:
+            return self._cache['ironic']
+
+        keystone = self.keystone
         endpoint = keystone.service_catalog.url_for(
             service_type='baremetal',
             endpoint_type='publicURL'
         )
-        return ironic_client(
+        self._cache['ironic'] = IronicClient(
             endpoint,
             token=keystone.auth_token,
             username=os.environ.get('OS_USERNAME'),
             password=os.environ.get('OS_PASSWORD'))
-    except Exception:
-        LOG.exception("An error occurred initializing the Ironic client")
-        raise
 
+        return self._cache['ironic']
 
-def inspectorclient():
-    try:
-        keystone = keystoneclient()
+    @property
+    def inspector(self):
+
+        if 'inspector' in self._cache:
+            return self._cache['inspector']
+
+        keystone = self.keystone
         endpoint = keystone.service_catalog.url_for(
             service_type='baremetal-introspection',
             endpoint_type='publicURL'
         )
-        return ironic_inspector_client.ClientV1(
+        self._cache['inspector'] = ironic_inspector_client.ClientV1(
             auth_token=keystone.auth_token,
             inspector_url=endpoint)
-    except Exception:
-        LOG.exception("An error occurred initializing the Ironic client")
-        raise
 
+        return self._cache['inspector']
 
-def swiftclient():
-    try:
+    @property
+    def swift(self):
+
+        if 'swift' in self._cache:
+            return self._cache['swift']
+
         params = {'retries': 2,
                   'user': os.environ.get('OS_USERNAME'),
                   'tenant_name': os.environ.get('OS_TENANT_NAME'),
@@ -99,11 +122,6 @@ def swiftclient():
                   'os_options': {'service_type': 'object-store',
                                  'endpoint_type': 'internalURL'}}
 
-        return swift_client.Connection(**params)
-    except Exception:
-        LOG.exception("An error occurred initializing the Swift client")
+        self._cache['swift'] = swift_client.Connection(**params)
 
-
-if os.environ.get("DASH_DEBUG"):
-    print("Mocking all clients")
-    from .mock_clients import *  # NOQA
+        return self._cache['swift']

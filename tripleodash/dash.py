@@ -12,12 +12,14 @@ from tripleodash import util
 
 class Dashboard(urwid.WidgetWrap):
 
-    def __init__(self, update_interval):
+    def __init__(self, clients, update_interval):
+
+        self._clients = clients
 
         self._list_box = None
         self._content_walker = None
         self._interval = update_interval
-        self._widgets = {}
+        self._sections = {}
         self._time = None
 
         self.overview_window()
@@ -44,7 +46,7 @@ class Dashboard(urwid.WidgetWrap):
 
         content_wrap = self.update_content()
 
-        vline = urwid.AttrWrap(urwid.SolidFill(u'\u2502'), 'line')
+        vline = urwid.AttrMap(urwid.SolidFill(u'\u2502'), 'line')
         menu = self.menu()
         w = urwid.Columns([
             menu,
@@ -53,15 +55,15 @@ class Dashboard(urwid.WidgetWrap):
         ], dividechars=1, focus_column=0)
 
         w = urwid.Padding(w, ('fixed left', 1), ('fixed right', 1))
-        w = urwid.AttrWrap(w, 'body')
+        w = urwid.AttrMap(w, 'body')
         w = urwid.LineBox(w)
-        w = urwid.AttrWrap(w, 'line')
+        w = urwid.AttrMap(w, 'line')
         return w
 
     def update_content(self):
 
-        self._active_widget.update()
-        widgets = self._active_widget.widgets()
+        self._active_section.update()
+        widgets = self._active_section.widgets()
 
         if self._content_walker is None:
             self._content_walker = urwid.SimpleListWalker(widgets)
@@ -74,22 +76,26 @@ class Dashboard(urwid.WidgetWrap):
         return self._list_box
 
     def nodes_window(self, loop=None, user_data=None):
-        if 'nodes' not in self._widgets:
-            self._widgets['nodes'] = nodes.NodesWidget()
-        self._active_widget = self._widgets['nodes']
+        if 'nodes' not in self._sections:
+            self._sections['nodes'] = nodes.NodesWidget(self._clients)
+        self._active_section = self._sections['nodes']
 
     def stacks_window(self, loop=None, user_data=None):
-        if 'stack' not in self._widgets:
-            self._widgets['stack'] = stacks.StacksWidget()
-        self._active_widget = self._widgets['stack']
+        if 'stacks' not in self._sections:
+            self._sections['stacks'] = stacks.StacksWidget(self._clients)
+        self._active_section = self._sections['stacks']
 
     def overview_window(self, loop=None, user_data=None):
-        if 'overview' not in self._widgets:
-            self._widgets['overview'] = overview.OverviewWidget()
-        self._active_widget = self._widgets['overview']
+        if 'overview' not in self._sections:
+            self._sections['overview'] = overview.OverviewWidget(
+                self._clients)
+        self._active_section = self._sections['overview']
+
+    def _now(self):
+        return datetime.datetime.now()
 
     def update_time(self):
-        time_string = datetime.datetime.now().strftime("%H:%M:%S %Z")
+        time_string = self._now().strftime("%H:%M:%S")
         if self._time is None:
             self._time = util.subtle(time_string, align="center")
         else:
