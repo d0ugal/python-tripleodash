@@ -22,7 +22,8 @@ class NodesWidget(DashboardSection):
 
         for i, node in enumerate(nodes):
             try:
-                introspect_status = self.clients.inspector.get_status(node.uuid)
+                introspect_status = self.clients.inspector.get_status(
+                    node.uuid)
             except http.ClientError:
                 introspect_status = {'finished': 'Not started'}
             rows.append((node.uuid, node.instance_uuid, node.power_state,

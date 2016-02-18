@@ -37,7 +37,7 @@ class TestOverviewSection(base.MockedClientTestCase):
             # Ironic
             util.header("Ironic Nodes"),
             urwid.Text("0 nodes registered."),
-            urwid.Text("Use these commands to build and upload images:"),
+            urwid.Text("Use these commands to register nodes:"),
             urwid.Text("    openstack baremetal import --json instackenv.json"
                        ),
             urwid.Text("    openstack baremetal configure boot"),
@@ -105,7 +105,7 @@ class TestOverviewSection(base.MockedClientTestCase):
         self.assertWidgetListEqual(widgets, [
             util.header("Ironic Nodes"),
             urwid.Text("0 nodes registered."),
-            urwid.Text("Use these commands to build and upload images:"),
+            urwid.Text("Use these commands to register nodes:"),
             urwid.Text("    openstack baremetal import --json "
                        "instackenv.json"),
             urwid.Text("    openstack baremetal configure boot"),

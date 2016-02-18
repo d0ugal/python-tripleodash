@@ -21,11 +21,15 @@ def main_header(t, **kwargs):
 
 def header(t, *args, **kwargs):
     return urwid.Text(("header", t), *args, **kwargs)
-header.selectable = False
 
 
 def subtle(t, **kwargs):
     return urwid.Text(("subtle", t), **kwargs)
+
+
+def table_header(t):
+    return header(t, 'center')
+table_header.selectable = False
 
 
 def row_a(t):
@@ -128,7 +132,7 @@ class AutoTable(object):
 
         widths = self.col_widths()
 
-        yield TableRow(self.header, widths, header)
+        yield TableRow(self.header, widths, table_header)
         yield urwid.Divider()
 
         for i, row in enumerate(self.rows):

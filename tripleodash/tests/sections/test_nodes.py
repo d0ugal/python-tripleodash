@@ -32,10 +32,11 @@ class TestNodesSection(base.MockedClientTestCase):
             util.header("Nodes"),
             urwid.Divider(),
             urwid.Divider(),
-            util.TableRow(self.section.table_headers, widths, util.header),
+            util.TableRow(self.section.table_headers, widths,
+                          util.table_header),
             urwid.Divider(),
             util.TableRow(
                 ('NODE UUID', 'INSTANCE UUID', 'Off', 'active', False, True),
-                widths, util.header,
+                widths, util.table_header,
             ),
         ])
