@@ -12,12 +12,6 @@ class TestDash(base.MockedClientTestCase):
         with self.assertRaises(urwid.ExitMainLoop):
             self.dash.handle_q('q')
 
-    def test_main_window(self):
-        pass
-
-    def test_update_content(self):
-        pass
-
     def test_nodes_window(self):
         # Setup
         dash = self.dash
@@ -69,9 +63,6 @@ class TestDash(base.MockedClientTestCase):
 
         # Verify
         self.assertEqual(widget.get_text(), ('09:08:07', [('subtle', 8)]))
-
-    def test_menu(self):
-        pass
 
     def test_tick(self):
 

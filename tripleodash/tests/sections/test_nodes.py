@@ -3,6 +3,7 @@ import urwid
 
 from tripleodash.sections import nodes
 from tripleodash.tests import base
+from tripleodash import util
 
 
 class TestNodesSection(base.MockedClientTestCase):
@@ -15,19 +16,26 @@ class TestNodesSection(base.MockedClientTestCase):
 
     def test_widgets(self):
 
+        self.clients.inspector.get_status.return_value = {'finished': True, }
+
         self.clients.ironic.node.list.return_value = [
             mock.MagicMock(
-                uuid="UUID", instance_uuid="Instance UUID",
+                uuid="NODE UUID", instance_uuid="INSTANCE UUID",
                 power_state="Off", provision_state="active",
-                maintenance=False, introspection_status=True)
+                maintenance=False)
         ]
 
         widgets = self.section.widgets()
+        widths = [10, 14, 6, 10, 12, 14]
 
-        self.assertEqual(widgets[0].get_text(), ("Nodes", [('header', 5)]))
-        self.assertEqual(type(widgets[1]), urwid.Divider)
-        self.assertEqual(type(widgets[2]), urwid.Divider)
-
-        self.assertEqual(type(widgets[4]), urwid.Divider)
-
-        self.assertEqual(len(widgets), 6)
+        self.assertWidgetListEqual(widgets, [
+            util.header("Nodes"),
+            urwid.Divider(),
+            urwid.Divider(),
+            util.TableRow(self.section.table_headers, widths, util.header),
+            urwid.Divider(),
+            util.TableRow(
+                ('NODE UUID', 'INSTANCE UUID', 'Off', 'active', False, True),
+                widths, util.header,
+            ),
+        ])

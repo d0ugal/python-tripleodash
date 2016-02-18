@@ -4,6 +4,7 @@ import mock
 import urwid
 
 from tripleodash import dash
+from tripleodash import util
 
 
 class MockedClients(object):
@@ -33,6 +34,9 @@ class MockedClientTestCase(unittest.TestCase):
                 self.assertEqual(element_a.get_text(), element_b.get_text())
             elif isinstance(element_a, urwid.Divider):
                 continue
+            elif isinstance(element_a, util.TableRow):
+                self.assertEqual(element_a.row, element_b.row)
+                self.assertEqual(element_a.widths, element_b.widths)
             else:
                 self.assertEqual(element_a, element_b)
 

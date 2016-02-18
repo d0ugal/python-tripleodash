@@ -11,30 +11,6 @@ DEPLOYED_STATUSES = set(['CREATE_COMPLETE', 'UPDATE_COMPLETE'])
 FAILED_STATUSES = set(['CREATE_FAILED', 'UPDATE_FAILED'])
 
 
-class StackRow(urwid.WidgetWrap):
-    def __init__(self, stack_name, stack_status, creation_time, updated_time,
-                 widget=urwid.Text, selectable=True):
-
-        self._selectable = selectable
-
-        self.cols = [
-            (20, widget(str(stack_name))),
-            (20, widget(str(stack_status))),
-            (20, widget(str(creation_time))),
-            (20, widget(str(updated_time))),
-        ]
-
-        wrapped_cols = urwid.AttrMap(urwid.Columns(self.cols), None,
-                                     'reversed')
-        super(StackRow, self).__init__(wrapped_cols)
-
-    def selectable(self):
-        return self._selectable
-
-    def keypress(self, size, key):
-        return key
-
-
 class OverviewWidget(DashboardSection):
 
     def __init__(self, clients):
@@ -83,7 +59,7 @@ class OverviewWidget(DashboardSection):
                 )
         else:
             lines.extend([
-                urwid.Text("Use these commands to build and upload images:"),
+                urwid.Text("Use these commands to register nodes:"),
                 urwid.Text("    openstack baremetal import --json "
                            "instackenv.json"),
                 urwid.Text("    openstack baremetal configure boot"),
@@ -125,17 +101,19 @@ class OverviewWidget(DashboardSection):
 
     def _stacks_summary(self, stacks):
 
-        lines = [
-            StackRow("Stack Name", "Stack Status", "Created Date",
-                     "Updated Date", widget=util.header, selectable=False),
-            urwid.Divider(),
-        ]
+        rows = [(
+            "Stack Name", "Stack Status", "Created Date",
+            "Updated Date"
+        )]
 
         for stack in stacks:
-            lines.append(StackRow(stack.stack_name, stack.stack_status,
-                                  stack.creation_time, stack.updated_time))
+            rows.append((
+                stack.stack_name, stack.stack_status, stack.creation_time,
+                stack.updated_time
+            ))
 
-        lines.append(urwid.Divider())
+        lines = list(util.AutoTable(rows).wrapped_widgets())
+
         lines.append(urwid.Divider())
 
         return lines

@@ -93,3 +93,47 @@ class TestUtil(base.MockedClientTestCase):
         self.assertEqual(widgets, [
             ("18:22 [Resource Name]: CREATE_IN_PROGRESS create progress", [])
         ])
+
+    def test_auto_table_widths(self):
+
+        rows = [
+            ("Header 1", "Header 2", "Header 3"),
+            ("Row 1", "Row 1", "Row 1"),
+            ("Row 2", "Row 2", "Row 2"),
+            ("Row 3", "Row 3", "Row 3"),
+        ]
+
+        table = util.AutoTable(rows)
+
+        self.assertEqual(table.col_widths(), [7, 7, 7])
+
+    def test_auto_table_widths_long_header(self):
+
+        rows = [
+            ("Node UUID", "Instance UUID", "Extra Long Header"),
+            ("UUIDUUIDUUIDUUIDUUID", "InstanceUUID", "NotLong"),
+        ]
+
+        table = util.AutoTable(rows)
+
+        self.assertEqual(table.col_widths(), [21, 13, 8])
+
+    def test_auto_table_widgets(self):
+
+        headers = ("Node UUID", "Instance", "Extra Long Header", "int", "bool")
+        widths = [21, 13, 8, 4, 6]
+
+        rows = [
+            headers,
+            ("UUIDUUIDUUIDUUIDUUID", "InstanceUUID", "NotLong", 3, False),
+        ]
+
+        widgets = list(util.AutoTable(rows).wrapped_widgets())
+
+        self.assertWidgetListEqual(widgets, [
+            util.TableRow(headers, widths),
+            urwid.Divider(),
+            util.TableRow((
+                "UUIDUUIDUUIDUUIDUUID", "InstanceUUID", "NotLong", 3, False
+            ), widths),
+        ])
