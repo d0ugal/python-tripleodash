@@ -118,9 +118,9 @@ class AutoTable(object):
         # save the max for that col.
         widths = (max(len(str(cell)) for cell in col) for col in cols)
 
-        # Add one to each width, for padding. Otherwise it can be hard to
+        # Add two to each width, for padding. Otherwise it can be hard to
         # distinguish the difference.
-        return [w+1 for w in widths]
+        return [w+2 for w in widths]
 
     def wrapped_widgets(self):
         """Create the widgets for the table

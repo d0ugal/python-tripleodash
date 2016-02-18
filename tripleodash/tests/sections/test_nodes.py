@@ -26,7 +26,7 @@ class TestNodesSection(base.MockedClientTestCase):
         ]
 
         widgets = self.section.widgets()
-        widths = [10, 14, 6, 10, 12, 14]
+        widths = [11, 15, 7, 11, 13, 15]
 
         self.assertWidgetListEqual(widgets, [
             util.header("Nodes"),

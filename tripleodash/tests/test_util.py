@@ -105,7 +105,7 @@ class TestUtil(base.MockedClientTestCase):
 
         table = util.AutoTable(rows)
 
-        self.assertEqual(table.col_widths(), [7, 7, 7])
+        self.assertEqual(table.col_widths(), [8, 8, 8])
 
     def test_auto_table_widths_long_header(self):
 
@@ -116,12 +116,12 @@ class TestUtil(base.MockedClientTestCase):
 
         table = util.AutoTable(rows)
 
-        self.assertEqual(table.col_widths(), [21, 13, 8])
+        self.assertEqual(table.col_widths(), [22, 14, 9])
 
     def test_auto_table_widgets(self):
 
         headers = ("Node UUID", "Instance", "Extra Long Header", "int", "bool")
-        widths = [21, 13, 8, 4, 6]
+        widths = [22, 14, 9, 5, 7]
 
         rows = [
             headers,
