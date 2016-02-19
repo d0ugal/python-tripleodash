@@ -29,8 +29,5 @@ Usage
     $ tripleodash
 
 
-Screenshot
-----------
+`Further documentation and screenshots <http://python-tripleodash.rtfd.org/>`_.
 
-.. image:: doc/source/images/screenshots/screenshot-10-stack-create-complete.png
-    :width: 100%
