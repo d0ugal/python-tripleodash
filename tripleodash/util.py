@@ -33,12 +33,12 @@ table_header.selectable = False
 
 
 def row_a(t):
-    return urwid.Text(("row_a", t))
+    return urwid.Text(("row_a", t), 'center')
 row_a.selectable = True
 
 
 def row_b(t):
-    return urwid.Text(("row_b", t))
+    return urwid.Text(("row_b", t), 'center')
 row_b.selectable = True
 
 

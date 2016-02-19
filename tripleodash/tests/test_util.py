@@ -60,6 +60,14 @@ class TestUtil(base.MockedClientTestCase):
         # Verify
         self.assertEqual(txt.get_text(), ('Subtle', [('subtle', 6)]))
 
+    def test_table_header(self):
+
+        # Test
+        txt = util.table_header("Table Header")
+
+        # Verify
+        self.assertEqual(txt.get_text(), ('Table Header', [('header', 12)]))
+
     def test_row_a(self):
 
         # Test
