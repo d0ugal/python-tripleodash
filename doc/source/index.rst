@@ -40,7 +40,7 @@ run tripleodash without touching the system Python install.
 .. note::
 
    If you don't have a pip and tox package for your system, install pip with
-   get-pip.py_ and then ``sudo pip install tox``
+   get-pip.py_ and then :code:`sudo pip install tox`
 
 .. _get-pip.py: https://pip.pypa.io/en/stable/installing/#installing-with-get-pip-py
 
