@@ -22,11 +22,31 @@ troubleshooting.
 Usage
 -----
 
+You can either install tripleodash system wide.
+
 .. code-block:: shell
 
+    $ source ~/stackrc
     $ pip install python-tripleodash
-    $ source stackrc
     $ tripleodash
+
+
+Or, run it in a virtualenv with Tox. This may be favourable if you want to
+run tripleodash without touching the system Python install.
+
+.. code-block:: shell
+
+    $ source ~/stackrc
+    $ git clone https://github.com/d0ugal/python-tripleodash.git
+    $ cd python-tripleodash
+    $ tox -e venv -- tripleodash
+
+.. note::
+
+   If you don't have a pip and tox package for your system, install pip with
+   get-pip.py_ and then :code:`sudo pip install tox`
+
+.. _get-pip.py: https://pip.pypa.io/en/stable/installing/#installing-with-get-pip-py
 
 
 `Further documentation and screenshots <http://python-tripleodash.rtfd.org/>`_.

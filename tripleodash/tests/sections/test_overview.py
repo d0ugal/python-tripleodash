@@ -43,12 +43,6 @@ class TestOverviewSection(base.MockedClientTestCase):
             urwid.Text("    openstack baremetal configure boot"),
             urwid.Divider(),
 
-            # Inspector
-            util.header("Node Introspection"),
-            urwid.Text("0 nodes currently being introspected"),
-            urwid.Text("0 nodes finished introspection"),
-            urwid.Divider(),
-
             # Heat
             util.header("Heat Stack"),
             urwid.Text("No stacks deployed.", ),
@@ -137,12 +131,7 @@ class TestOverviewSection(base.MockedClientTestCase):
         widgets = self.section._inspector_summary()
 
         # Verify
-        self.assertWidgetListEqual(widgets, [
-            util.header("Node Introspection"),
-            urwid.Text("0 nodes currently being introspected"),
-            urwid.Text("0 nodes finished introspection"),
-            urwid.Divider(),
-        ])
+        self.assertWidgetListEqual(widgets, [])
 
     def test_inspector_summary_progress(self):
 
@@ -162,7 +151,6 @@ class TestOverviewSection(base.MockedClientTestCase):
         # Verify
         self.assertWidgetListEqual(widgets, [
             util.header("Node Introspection"),
-            urwid.Text("0 nodes currently being introspected"),
             urwid.Text("2 nodes finished introspection"),
             urwid.Divider(),
         ])

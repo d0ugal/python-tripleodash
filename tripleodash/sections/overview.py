@@ -4,6 +4,7 @@ from heatclient.common import event_utils
 from ironic_inspector_client.common import http as inspector_http
 import urwid
 
+from tripleodash import clients
 from tripleodash.sections.base import DashboardSection
 from tripleodash import util
 
@@ -77,18 +78,46 @@ class OverviewWidget(DashboardSection):
         for node in nodes:
             try:
                 inspector_status = self.clients.inspector.get_status(node.uuid)
+                inspector_status = inspector_status['finished']
             except inspector_http.ClientError:
-                inspector_status = {'finished': "Not started"}
-            by_introspection_status[inspector_status['finished']].append(node)
+                inspector_status = "Not started"
+            except clients.ServiceNotAvailable:
+                inspector_status = 'Unknown'
+            by_introspection_status[inspector_status].append(node)
 
-        return [
-            util.header("Node Introspection"),
-            urwid.Text("{0} nodes currently being introspected".format(
-                len(by_introspection_status[False]))),
-            urwid.Text("{0} nodes finished introspection".format(
-                len(by_introspection_status[True]))),
-            urwid.Divider(),
+        lines = [
+            util.header("Node Introspection")
         ]
+
+        if len(by_introspection_status[False]):
+            lines.append(
+                urwid.Text("{0} nodes currently being introspected".format(
+                    len(by_introspection_status[False])))
+            )
+
+        if len(by_introspection_status[True]):
+            lines.append(
+                urwid.Text("{0} nodes finished introspection".format(
+                    len(by_introspection_status[True]))),
+            )
+
+        if len(by_introspection_status["Not started"]):
+            lines.append(
+                urwid.Text("{0} nodes not yet started introspection".format(
+                    len(by_introspection_status["Not started"]))),
+            )
+
+        if len(by_introspection_status["Unknown"]):
+            lines.append(
+                urwid.Text("Failed to get introspection status for {0} nodes"
+                           .format(len(by_introspection_status["Unknown"]))),
+            )
+
+        if len(lines) == 1:
+            return []
+
+        lines.append(urwid.Divider())
+        return lines
 
     def _stack_event_summary(self, stack):
 

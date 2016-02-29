@@ -1,5 +1,6 @@
 from ironic_inspector_client.common import http
 
+from tripleodash import clients
 from tripleodash.sections.base import DashboardSection
 from tripleodash import util
 
@@ -23,12 +24,15 @@ class NodesWidget(DashboardSection):
         for i, node in enumerate(nodes):
             try:
                 introspect_status = self.clients.inspector.get_status(
-                    node.uuid)
+                    node.uuid)['finished']
             except http.ClientError:
-                introspect_status = {'finished': 'Not started'}
+                introspect_status = 'Not started'
+            except clients.ServiceNotAvailable:
+                introspect_status = 'Unknown'
+
             rows.append((node.uuid, node.instance_uuid, node.power_state,
                          node.provision_state, node.maintenance,
-                         introspect_status['finished']))
+                         introspect_status))
 
         return rows
 
