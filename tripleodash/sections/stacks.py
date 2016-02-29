@@ -34,7 +34,7 @@ class StacksWidget(DashboardSection):
         stacks = list(self.clients.heat.stacks.list())
 
         if len(stacks):
-            widgets = util.AutoTable(self.rows()).wrapped_widgets()
+            widgets = util.AutoTable(self.rows(stacks)).wrapped_widgets()
         else:
             widgets = [urwid.Text("No Heat stacks found."), ]
         return super(StacksWidget, self).widgets() + list(widgets)
