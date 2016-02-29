@@ -100,7 +100,7 @@ class Dashboard(urwid.WidgetWrap):
 
     def update_time(self, seconds_until_update):
         time_string = self._now().strftime("%H:%M:%S")
-        update = "Updating in {}s".format(seconds_until_update)
+        update = "Updating in {0:.1f}s".format(seconds_until_update)
         if self._time is None:
             self._time = util.subtle(time_string, align="center")
             self._time_until_update = util.subtle(update, align="center")
@@ -141,6 +141,7 @@ class Dashboard(urwid.WidgetWrap):
         self.update_time(seconds_until_update)
 
         if seconds_until_update <= 0:
+            self._time_until_update.set_text(("subtle", "Updating..."))
             self.update_content()
             self._last_update = time.time()
             self._update_duration = self._last_update - now
