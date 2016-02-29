@@ -1,4 +1,5 @@
 import datetime
+import time
 
 import urwid
 
@@ -21,6 +22,7 @@ class Dashboard(urwid.WidgetWrap):
         self._interval = update_interval
         self._sections = {}
         self._time = None
+        self._last_update = time.time()
 
         self.overview_window()
         self.update_time()
@@ -123,7 +125,16 @@ class Dashboard(urwid.WidgetWrap):
 
     def tick(self, loop=None, user_data=None):
 
+        # Find out how long the last update took and use that as the interval
+        # this time. Otherwise the UI will be frozen more than 50% of the time.
+        # This still isn't ideal, it would be much better if the update was
+        # non-blocking but until we can do this it will be a bit nicer to use.
+        now = time.time()
+        time_since_update = now - self._last_update - self._interval
+        interval = max(self._interval, time_since_update)
+
+        self._last_update = now
         self.update_time()
         self.update_content()
 
-        self.animate_alarm = self._loop.set_alarm_in(self._interval, self.tick)
+        self.animate_alarm = self._loop.set_alarm_in(interval, self.tick)
