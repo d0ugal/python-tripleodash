@@ -98,19 +98,19 @@ class OverviewWidget(DashboardSection):
         if len(by_introspection_status[True]):
             lines.append(
                 urwid.Text("{0} nodes finished introspection".format(
-                    len(by_introspection_status[True]))),
+                    len(by_introspection_status[True])))
             )
 
         if len(by_introspection_status["Not started"]):
             lines.append(
                 urwid.Text("{0} nodes not yet started introspection".format(
-                    len(by_introspection_status["Not started"]))),
+                    len(by_introspection_status["Not started"])))
             )
 
         if len(by_introspection_status["Unknown"]):
             lines.append(
                 urwid.Text("Failed to get introspection status for {0} nodes"
-                           .format(len(by_introspection_status["Unknown"]))),
+                           .format(len(by_introspection_status["Unknown"])))
             )
 
         if len(lines) == 1:
