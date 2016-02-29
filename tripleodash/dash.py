@@ -17,15 +17,17 @@ class Dashboard(urwid.WidgetWrap):
 
         self._clients = clients
 
-        self._list_box = None
         self._content_walker = None
         self._interval = update_interval
+        self._last_update = time.time()
+        self._list_box = None
         self._sections = {}
         self._time = None
-        self._last_update = time.time()
+        self._time_until_update = None
+        self._update_duration = 0
 
         self.overview_window()
-        self.update_time()
+        self.update_time(update_interval)
 
         super(Dashboard, self).__init__(self.main_window())
 
@@ -96,12 +98,15 @@ class Dashboard(urwid.WidgetWrap):
     def _now(self):
         return datetime.datetime.now()
 
-    def update_time(self):
+    def update_time(self, seconds_until_update):
         time_string = self._now().strftime("%H:%M:%S")
+        update = "Updating in {}s".format(seconds_until_update)
         if self._time is None:
             self._time = util.subtle(time_string, align="center")
+            self._time_until_update = util.subtle(update, align="center")
         else:
             self._time.set_text(("subtle", time_string))
+            self._time_until_update.set_text(("subtle", update))
 
     def menu(self):
 
@@ -110,7 +115,7 @@ class Dashboard(urwid.WidgetWrap):
             util.subtle("v{0}".format(tripleodash.RELEASE_STRING),
                         align="center"),
             self._time,
-            urwid.Divider(),
+            self._time_until_update,
             urwid.Divider(),
             util.button("Overview", self.overview_window),
             util.button("Nodes", self.nodes_window),
@@ -130,11 +135,14 @@ class Dashboard(urwid.WidgetWrap):
         # This still isn't ideal, it would be much better if the update was
         # non-blocking but until we can do this it will be a bit nicer to use.
         now = time.time()
-        time_since_update = now - self._last_update - self._interval
-        interval = max(self._interval, time_since_update)
+        interval = max(self._interval, self._update_duration)
 
-        self._last_update = now
-        self.update_time()
-        self.update_content()
+        seconds_until_update = interval - (now - self._last_update)
+        self.update_time(seconds_until_update)
 
-        self.animate_alarm = self._loop.set_alarm_in(interval, self.tick)
+        if seconds_until_update <= 0:
+            self.update_content()
+            self._last_update = time.time()
+            self._update_duration = self._last_update - now
+
+        self.animate_alarm = self._loop.set_alarm_in(0.5, self.tick)

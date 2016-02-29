@@ -55,14 +55,18 @@ class TestDash(base.MockedClientTestCase):
         # Setup
         dt = datetime.datetime(2016, 2, 17, 9, 8, 7)
         self.dash._now = mock.MagicMock(return_value=dt)
-        widget = self.dash._time
-        self.assertEqual(type(widget), urwid.Text)
+        time = self.dash._time
+        count = self.dash._time_until_update
+        self.assertEqual(type(time), urwid.Text)
+        self.assertEqual(type(count), urwid.Text)
 
         # Test
-        self.dash.update_time()
+        self.dash.update_time(10)
 
         # Verify
-        self.assertEqual(widget.get_text(), ('09:08:07', [('subtle', 8)]))
+        self.assertEqual(time.get_text(), ('09:08:07', [('subtle', 8)]))
+        self.assertEqual(count.get_text(), ('Updating in 10s', [
+            ('subtle', 15)]))
 
     def test_tick(self):
 
@@ -73,4 +77,4 @@ class TestDash(base.MockedClientTestCase):
         self.dash.tick()
 
         # Verify
-        self.dash._loop.set_alarm_in.assert_called_with(10, self.dash.tick)
+        self.dash._loop.set_alarm_in.assert_called_with(0.5, self.dash.tick)
