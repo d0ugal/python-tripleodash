@@ -1,7 +1,12 @@
 import urwid
 
 
-def button(t, fn):
+def button(t, *fns):
+
+    def fn(*args, **kwargs):
+        for fn_ in fns:
+            fn_(*args, **kwargs)
+
     w = urwid.Button(t, fn)
     w = urwid.AttrWrap(w, 'button normal', 'button select')
     return w

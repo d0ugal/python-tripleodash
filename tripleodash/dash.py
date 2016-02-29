@@ -27,8 +27,8 @@ class Dashboard(urwid.WidgetWrap):
         self._time_until_update = None
         self._update_duration = 0
 
-        self.overview_window()
         self.update_time(update_interval)
+        self.overview_window()
 
         super(Dashboard, self).__init__(self.main_window())
 
@@ -118,9 +118,9 @@ class Dashboard(urwid.WidgetWrap):
             self._time,
             self._time_until_update,
             urwid.Divider(),
-            util.button("Overview", self.overview_window),
-            util.button("Nodes", self.nodes_window),
-            util.button("Stacks", self.stacks_window),
+            util.button("Overview", self.overview_window, self._trigger_update),
+            util.button("Nodes", self.nodes_window, self._trigger_update),
+            util.button("Stacks", self.stacks_window, self._trigger_update),
             urwid.Divider(),
             urwid.Divider(),
             util.exit_button("Quit")
@@ -135,6 +135,10 @@ class Dashboard(urwid.WidgetWrap):
         self._last_update = time.time()
         self._update_duration = self._last_update - now
 
+    def _trigger_update(self, loop=None, user_data=None):
+        self._time_until_update.set_text(("subtle", "Updating..."))
+        self.animate_alarm = self._loop.set_alarm_in(0.1, self._update)
+
     def tick(self, loop=None, user_data=None):
 
         # Find out how long the last update took and use that as the interval
@@ -148,7 +152,6 @@ class Dashboard(urwid.WidgetWrap):
         self.update_time(seconds_until_update)
 
         if seconds_until_update <= 0:
-            self._time_until_update.set_text(("subtle", "Updating..."))
-            self.animate_alarm = self._loop.set_alarm_in(0.1, self._update)
+            self._trigger_update()
 
         self.animate_alarm = self._loop.set_alarm_in(1, self.tick)
