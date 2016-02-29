@@ -7,8 +7,7 @@ from tripleodash import util
 class StacksWidget(DashboardSection):
 
     table_headers = (
-        "UUID", "Instance UUID", "Power State", "Provision State",
-        "Maintenance", "Introspection Finished"
+        "Stack Name", "Stack Status", "Created Date", "Updated Date"
     )
 
     def __init__(self, clients):
