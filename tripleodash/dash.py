@@ -1,4 +1,5 @@
 import datetime
+import math
 import time
 
 import urwid
@@ -100,7 +101,7 @@ class Dashboard(urwid.WidgetWrap):
 
     def update_time(self, seconds_until_update):
         time_string = self._now().strftime("%H:%M:%S")
-        update = "Updating in {0:.1f}s".format(seconds_until_update)
+        update = "Updating in {0:.0f}s".format(seconds_until_update)
         if self._time is None:
             self._time = util.subtle(time_string, align="center")
             self._time_until_update = util.subtle(update, align="center")
@@ -128,6 +129,12 @@ class Dashboard(urwid.WidgetWrap):
         w.set_focus(3)
         return w
 
+    def _update(self, loop=None, user_data=None):
+        now = time.time()
+        self.update_content()
+        self._last_update = time.time()
+        self._update_duration = self._last_update - now
+
     def tick(self, loop=None, user_data=None):
 
         # Find out how long the last update took and use that as the interval
@@ -137,13 +144,11 @@ class Dashboard(urwid.WidgetWrap):
         now = time.time()
         interval = max(self._interval, self._update_duration)
 
-        seconds_until_update = interval - (now - self._last_update)
+        seconds_until_update = math.ceil(interval - (now - self._last_update))
         self.update_time(seconds_until_update)
 
         if seconds_until_update <= 0:
             self._time_until_update.set_text(("subtle", "Updating..."))
-            self.update_content()
-            self._last_update = time.time()
-            self._update_duration = self._last_update - now
+            self.animate_alarm = self._loop.set_alarm_in(0.1, self._update)
 
-        self.animate_alarm = self._loop.set_alarm_in(0.5, self.tick)
+        self.animate_alarm = self._loop.set_alarm_in(1, self.tick)

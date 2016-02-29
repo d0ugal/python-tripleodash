@@ -77,4 +77,4 @@ class TestDash(base.MockedClientTestCase):
         self.dash.tick()
 
         # Verify
-        self.dash._loop.set_alarm_in.assert_called_with(0.5, self.dash.tick)
+        self.dash._loop.set_alarm_in.assert_called_with(1, self.dash.tick)
