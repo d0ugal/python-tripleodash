@@ -6,6 +6,7 @@ import urwid
 
 import tripleodash
 from tripleodash import palette
+from tripleodash.sections import about
 from tripleodash.sections import images
 from tripleodash.sections import nodes
 from tripleodash.sections import overview
@@ -102,6 +103,12 @@ class Dashboard(urwid.WidgetWrap):
                 self._clients)
         self._active_section = self._sections['overview']
 
+    def about_window(self, loop=None, user_data=None):
+        if 'about' not in self._sections:
+            self._sections['about'] = about.About(
+                self._clients)
+        self._active_section = self._sections['about']
+
     def _now(self):
         return datetime.datetime.now()
 
@@ -131,6 +138,7 @@ class Dashboard(urwid.WidgetWrap):
             util.button("Stacks", self.stacks_window, self._trigger_update),
             urwid.Divider(),
             urwid.Divider(),
+            util.button("About", self.about_window, self._trigger_update),
             util.exit_button("Quit")
         ]
         w = urwid.ListBox(urwid.SimpleListWalker(l))
