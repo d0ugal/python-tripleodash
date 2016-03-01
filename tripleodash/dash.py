@@ -39,6 +39,7 @@ class Dashboard(urwid.WidgetWrap):
             raise urwid.ExitMainLoop()
         elif key in ('a', 'A'):
             self.about_window()
+            self._trigger_update()
 
     def run(self):
 
