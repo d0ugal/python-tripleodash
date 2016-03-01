@@ -40,3 +40,15 @@ class TestNodesSection(base.MockedClientTestCase):
                 widths, util.table_header,
             ),
         ])
+
+    def test_widgets_no_nodes(self):
+
+        self.clients.ironic.node.list.return_value = []
+        widgets = self.section.widgets()
+
+        self.assertWidgetListEqual(widgets, [
+            util.header("Nodes"),
+            urwid.Divider(),
+            urwid.Divider(),
+            urwid.Text("No Ironic nodes found.")
+        ])

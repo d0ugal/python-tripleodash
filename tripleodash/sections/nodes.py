@@ -1,3 +1,5 @@
+import urwid
+
 from ironic_inspector_client.common import http
 
 from tripleodash import clients
@@ -15,9 +17,7 @@ class NodesWidget(DashboardSection):
     def __init__(self, clients):
         super(NodesWidget, self).__init__(clients, "Nodes")
 
-    def rows(self):
-
-        nodes = self.clients.ironic.node.list()
+    def rows(self, nodes):
 
         rows = [self.table_headers, ]
 
@@ -37,5 +37,12 @@ class NodesWidget(DashboardSection):
         return rows
 
     def widgets(self):
-        widgets = util.AutoTable(self.rows()).wrapped_widgets()
+
+        nodes = list(self.clients.ironic.node.list())
+
+        if len(nodes):
+            widgets = util.AutoTable(self.rows(nodes)).wrapped_widgets()
+        else:
+            widgets = [urwid.Text("No Ironic nodes found."), ]
+
         return super(NodesWidget, self).widgets() + list(widgets)
