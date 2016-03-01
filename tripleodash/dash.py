@@ -6,6 +6,7 @@ import urwid
 
 import tripleodash
 from tripleodash import palette
+from tripleodash.sections import images
 from tripleodash.sections import nodes
 from tripleodash.sections import overview
 from tripleodash.sections import stacks
@@ -80,6 +81,11 @@ class Dashboard(urwid.WidgetWrap):
 
         return self._list_box
 
+    def images_window(self, loop=None, user_data=None):
+        if 'images' not in self._sections:
+            self._sections['images'] = images.ImagesWidget(self._clients)
+        self._active_section = self._sections['images']
+
     def nodes_window(self, loop=None, user_data=None):
         if 'nodes' not in self._sections:
             self._sections['nodes'] = nodes.NodesWidget(self._clients)
@@ -118,7 +124,9 @@ class Dashboard(urwid.WidgetWrap):
             self._time,
             self._time_until_update,
             urwid.Divider(),
-            util.button("Overview", self.overview_window, self._trigger_update),
+            util.button("Overview", self.overview_window,
+                        self._trigger_update),
+            util.button("Images", self.images_window, self._trigger_update),
             util.button("Nodes", self.nodes_window, self._trigger_update),
             util.button("Stacks", self.stacks_window, self._trigger_update),
             urwid.Divider(),
