@@ -37,6 +37,8 @@ class Dashboard(urwid.WidgetWrap):
     def handle_q(self, key):
         if key in ('q', 'Q'):
             raise urwid.ExitMainLoop()
+        elif key in ('a', 'A'):
+            self.about_window()
 
     def run(self):
 
@@ -138,7 +140,6 @@ class Dashboard(urwid.WidgetWrap):
             util.button("Stacks", self.stacks_window, self._trigger_update),
             urwid.Divider(),
             urwid.Divider(),
-            util.button("About", self.about_window, self._trigger_update),
             util.exit_button("Quit")
         ]
         w = urwid.ListBox(urwid.SimpleListWalker(l))
