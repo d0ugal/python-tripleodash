@@ -10,8 +10,8 @@ import ironic_inspector_client
 from ironicclient.v1.client import Client as IronicClient
 from keystoneauth1.exceptions import catalog
 from keystoneclient.v2_0 import client as ksclient
-from swiftclient import client as swift_client
 from novaclient import client as nova_client
+from swiftclient import client as swift_client
 
 LOG = logging.getLogger(__name__)
 
