@@ -10,6 +10,7 @@ from tripleodash.sections import about
 from tripleodash.sections import images
 from tripleodash.sections import nodes
 from tripleodash.sections import overview
+from tripleodash.sections import servers
 from tripleodash.sections import stacks
 from tripleodash import util
 
@@ -112,6 +113,12 @@ class Dashboard(urwid.WidgetWrap):
                 self._clients)
         self._active_section = self._sections['about']
 
+    def servers_window(self, loop=None, user_data=None):
+        if 'servers' not in self._sections:
+            self._sections['servers'] = servers.ServersWidget(
+                self._clients)
+        self._active_section = self._sections['servers']
+
     def _now(self):
         return datetime.datetime.now()
 
@@ -139,6 +146,7 @@ class Dashboard(urwid.WidgetWrap):
             util.button("Images", self.images_window, self._trigger_update),
             util.button("Nodes", self.nodes_window, self._trigger_update),
             util.button("Stacks", self.stacks_window, self._trigger_update),
+            util.button("Servers", self.servers_window, self._trigger_update),
             urwid.Divider(),
             urwid.Divider(),
             util.exit_button("Quit")

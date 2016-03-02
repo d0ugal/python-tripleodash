@@ -14,6 +14,7 @@ class MockedClients(object):
         self.ironic = mock.MagicMock()
         self.inspector = mock.MagicMock()
         self.glance = mock.MagicMock()
+        self.nova = mock.MagicMock()
 
 
 class MockedClientTestCase(unittest.TestCase):

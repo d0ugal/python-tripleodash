@@ -11,6 +11,7 @@ from ironicclient.v1.client import Client as IronicClient
 from keystoneauth1.exceptions import catalog
 from keystoneclient.v2_0 import client as ksclient
 from swiftclient import client as swift_client
+from novaclient import client as nova_client
 
 LOG = logging.getLogger(__name__)
 
@@ -47,6 +48,21 @@ class ClientManager(object):
             insecure=True
         )
         return self._cache['keystone']
+
+    @property
+    def nova(self):
+
+        if 'nova' in self._cache:
+            return self._cache['nova']
+
+        self._cache['nova'] = nova_client.Client(
+            2,
+            os.environ.get('OS_USERNAME'),
+            os.environ.get('OS_PASSWORD'),
+            os.environ.get('OS_TENANT_NAME'),
+            os.environ.get('OS_AUTH_URL')
+        )
+        return self._cache['nova']
 
     @property
     def glance(self):
