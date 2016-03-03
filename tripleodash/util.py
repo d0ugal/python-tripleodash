@@ -52,7 +52,7 @@ def heat_event_log_formatter(events):
     event_log = []
     log_format = ("%(event_time)s "
                   "[%(rsrc_name)s]: %(rsrc_status)s %(rsrc_status_reason)s")
-    for event in events:
+    for event in list(events)[:200]:
         event_time = getattr(event, 'event_time', '')
         log = log_format % {
             'event_time': event_time.replace('T', ' '),
@@ -62,10 +62,7 @@ def heat_event_log_formatter(events):
         }
         event_log.append(log)
 
-    lines = [urwid.Text(line, wrap="clip") for line in event_log]
-    box = urwid.ListBox(urwid.SimpleListWalker(lines))
-    box.set_focus_valign('bottom')
-    return urwid.BoxAdapter(box, 20)
+    return [urwid.Text(line, wrap="clip") for line in event_log]
 
 
 class TableRow(urwid.WidgetWrap):

@@ -95,11 +95,12 @@ class TestUtil(base.MockedClientTestCase):
             )
         ]
 
-        box = util.heat_event_log_formatter(events)
-        widgets = [w.get_text() for w in list(box.original_widget.body)]
+        widgets = util.heat_event_log_formatter(events)
 
-        self.assertEqual(widgets, [
-            ("18:22 [Resource Name]: CREATE_IN_PROGRESS create progress", [])
+        self.assertWidgetListEqual(widgets, [
+            urwid.Text(
+                "18:22 [Resource Name]: CREATE_IN_PROGRESS create progress",
+                wrap='clip')
         ])
 
     def test_auto_table_widths(self):

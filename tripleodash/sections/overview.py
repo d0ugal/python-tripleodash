@@ -126,7 +126,7 @@ class OverviewWidget(DashboardSection):
                                         nested_depth=1,
                                         event_args={'sort_dir': 'asc'})
 
-        return util.heat_event_log_formatter(events[-25:])
+        return util.heat_event_log_formatter(reversed(events))
 
     def _stacks_summary(self, stacks):
 
@@ -200,7 +200,7 @@ class OverviewWidget(DashboardSection):
             header = "Stack '{0}' status: {1}".format(
                 stack.stack_name, stack.stack_status)
             lines.append(util.header(header))
-            lines.append(self._stack_event_summary(stack))
+            lines.extend(self._stack_event_summary(stack))
             lines.append(urwid.Divider())
         return lines
 
