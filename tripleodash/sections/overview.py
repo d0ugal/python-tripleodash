@@ -11,6 +11,7 @@ from tripleodash import util
 
 DEPLOYED_STATUSES = set(['CREATE_COMPLETE', 'UPDATE_COMPLETE'])
 FAILED_STATUSES = set(['CREATE_FAILED', 'UPDATE_FAILED'])
+DEPLOYING_STATUSES = set(['CREATE_IN_PROGRESS', 'UPDATE_IN_PROGRESS'])
 
 
 class OverviewWidget(DashboardSection):
@@ -201,8 +202,15 @@ class OverviewWidget(DashboardSection):
         lines.extend(self._ironic_summary())
 
         for stack in stacks:
-            header = "Stack '{0}' status: {1}".format(
-                stack.stack_name, stack.stack_status)
+
+            extra = ""
+
+            if stack.stack_status in DEPLOYING_STATUSES:
+                time_string = stack.updated_time or stack.creation_time
+                extra = " (Started: {})".format(time_string)
+
+            header = "Stack '{0}' status: {1}{2}".format(
+                stack.stack_name, stack.stack_status, extra)
             lines.append(util.header(header))
             lines.extend(self._stack_event_summary(stack))
             lines.append(urwid.Divider())
@@ -217,6 +225,7 @@ class OverviewWidget(DashboardSection):
         lines.extend(self._ironic_summary())
 
         for stack in stacks:
+
             header = "Stack '{0}' status: {1}".format(
                 stack.stack_name, stack.stack_status)
             lines.append(util.header(header))
