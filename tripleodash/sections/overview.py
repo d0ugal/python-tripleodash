@@ -1,6 +1,7 @@
 import collections
 
 from heatclient.common import event_utils
+from heatclient import exc
 from ironic_inspector_client.common import http as inspector_http
 import urwid
 
@@ -121,10 +122,13 @@ class OverviewWidget(DashboardSection):
 
     def _stack_event_summary(self, stack):
 
-        events = event_utils.get_events(self.clients.heat,
-                                        stack_id=stack.stack_name,
-                                        nested_depth=1,
-                                        event_args={'sort_dir': 'asc'})
+        try:
+            events = event_utils.get_events(self.clients.heat,
+                                            stack_id=stack.stack_name,
+                                            nested_depth=1,
+                                            event_args={'sort_dir': 'asc'})
+        except exc.CommandError:
+            return []
 
         return util.heat_event_log_formatter(reversed(events))
 
