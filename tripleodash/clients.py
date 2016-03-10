@@ -126,10 +126,14 @@ class ClientManager(object):
             return self._cache['inspector']
 
         keystone = self.keystone
-        endpoint = self._get_endpoint(
-            service_type='baremetal-introspection',
-            endpoint_type='publicURL'
-        )
+        try:
+            endpoint = self._get_endpoint(
+                service_type='baremetal-introspection',
+                endpoint_type='publicURL'
+            )
+        except ServiceNotAvailable:
+            # Ironic inspector will default to trying the localhost.
+            endpoint = None
         self._cache['inspector'] = ironic_inspector_client.ClientV1(
             auth_token=keystone.auth_token,
             inspector_url=endpoint)
