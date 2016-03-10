@@ -2,12 +2,14 @@ from __future__ import print_function
 
 import logging
 import os
+import sys
 
 import cachetools
 from glanceclient.v2.client import Client as GlanceClient
 from heatclient.v1.client import Client as HeatClient
 import ironic_inspector_client
 from ironicclient.v1.client import Client as IronicClient
+from keystoneauth1.exceptions import auth
 from keystoneauth1.exceptions import catalog
 from keystoneclient.v2_0 import client as ksclient
 from novaclient import client as nova_client
@@ -39,14 +41,20 @@ class ClientManager(object):
         if 'keystone' in self._cache:
             return self._cache['keystone']
 
-        self._cache['keystone'] = ksclient.Client(
-            username=os.environ.get('OS_USERNAME'),
-            tenant_name=os.environ.get('OS_TENANT_NAME'),
-            password=os.environ.get('OS_PASSWORD'),
-            auth_url=os.environ.get('OS_AUTH_URL'),
-            auth_version=2,
-            insecure=True
-        )
+        try:
+            self._cache['keystone'] = ksclient.Client(
+                username=os.environ.get('OS_USERNAME'),
+                tenant_name=os.environ.get('OS_TENANT_NAME'),
+                password=os.environ.get('OS_PASSWORD'),
+                auth_url=os.environ.get('OS_AUTH_URL'),
+                auth_version=2,
+                insecure=True
+            )
+        except auth.AuthorizationFailure:
+            print("Failed to authenticate with keystone. Check that the "
+                  "OS_USERNAME, OS_PASSWORD, OS_TENANT_NAME and OS_AUTH_URL "
+                  "environment variables are set.", file=sys.stderr)
+            sys.exit()
         return self._cache['keystone']
 
     @property
