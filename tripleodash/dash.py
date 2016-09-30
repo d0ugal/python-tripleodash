@@ -12,6 +12,7 @@ from tripleodash.sections import nodes
 from tripleodash.sections import overview
 from tripleodash.sections import servers
 from tripleodash.sections import stacks
+from tripleodash import urwid_eventlet
 from tripleodash import util
 
 
@@ -29,6 +30,8 @@ class Dashboard(urwid.WidgetWrap):
         self._time = None
         self._time_until_update = None
         self._update_duration = 0
+
+        self._event_loop = urwid_eventlet.EventletEventLoop()
 
         self.update_time(update_interval)
         self.overview_window()
@@ -49,7 +52,8 @@ class Dashboard(urwid.WidgetWrap):
         screen.set_terminal_properties(256)
 
         self._loop = urwid.MainLoop(self, screen=screen,
-                                    unhandled_input=self.handle_q)
+                                    unhandled_input=self.handle_q,
+                                    event_loop=self._event_loop)
         self._loop.set_alarm_in(self._interval, self.tick)
         self._loop.run()
 
